@@ -146,22 +146,42 @@ test("prepareBody is called", function(assert){
   });
 });
 
-test("prepareHeaders is called", function(assert){
+
+test("prepareBody is called", function(assert){
   var done = assert.async();
 
-  pretender.prepareHeaders = function(headers){
-    headers['X-WAS-CALLED'] = 'YES';
-    return headers;
-  };
-
+  var obj = {foo: 'bar'};
+  pretender.prepareBody = JSON.stringify;
   pretender.get('/some/path', function(req){
-    return [200, {}, ''];
+    return [200, {}, obj];
   });
 
   $.ajax({
     url: '/some/path',
-    complete: function(xhr){
-      equal(xhr.getResponseHeader('X-WAS-CALLED'), 'YES');
+    success: function(resp){
+      deepEqual(JSON.parse(resp), obj);
+      done();
+    }
+  });
+});
+
+
+test("alterPath is called", function(assert){
+  var done = assert.async();
+
+  var obj = {foo: 'bar'};
+  pretender.alterPath = function(url){
+    return url.replace('http://localhost:4200','');
+  };
+
+  pretender.get('/some/path', function(req){
+    return [200, {}, obj];
+  });
+
+  $.ajax({
+    url: 'http://localhost:4200/some/path',
+    success: function(resp){
+      deepEqual(JSON.parse(resp), obj);
       done();
     }
   });

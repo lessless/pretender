@@ -183,7 +183,7 @@ Pretender.prototype = {
     var verb = request.method.toUpperCase();
     var path = request.url;
 
-    throwIfURLDetected(path);
+    // throwIfURLDetected(path);
 
     verb = verb.toUpperCase();
 
@@ -199,7 +199,7 @@ Pretender.prototype = {
   },
   handleRequest: function handleRequest(request){
     var verb = request.method.toUpperCase();
-    var path = request.url;
+    var path = this.alterPath(request.url);
 
     var handler = this._handlerFor(verb, path, request);
 
@@ -268,6 +268,7 @@ Pretender.prototype = {
   },
   prepareBody: function(body) { return body; },
   prepareHeaders: function(headers) { return headers; },
+  alterPath: function(url) { return url; },
   handledRequest: function(verb, path, request) { /* no-op */},
   passthroughRequest: function(verb, path, request) { /* no-op */},
   unhandledRequest: function(verb, path, request) {
